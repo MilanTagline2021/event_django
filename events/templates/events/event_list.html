@@ -1,0 +1,54 @@
+{% extends 'events/base.html' %}
+
+{% block content %}
+      {% for event in page_obj %}
+      {% if event.approved %}
+        <div class="card">
+            <div class="card-header">
+                {{ event }}
+            </div>
+            <div class="card-body">
+              <h5 class="card-title">Venue : {{ event.venue }}</h5>
+              <p class="card-text">
+                    <strong>Event Date : </strong>{{ event.event_date }}<br/>
+                    <strong>Days Till Event : </strong>{{ event.Days_till }}<br/>
+                    <strong>Occured : </strong>{{ event.Is_Past }}<br/>
+                    <strong>Event Venue : </strong>{{ event.venue }}<br/>
+                    <strong>Event Website: </strong>{{ event.venue.web }}<br/>
+                    <strong>Event Manager : </strong>{{ event.manager }}<br/>
+                    <strong>Event Description : </strong>{{ event.description }}<br/>
+                    <strong>Approved : </strong>{{ event.approved }}<br/>
+                    <strong>Attendence : </strong>{{ attendence_percentage }} % <br/>
+                    <strong>Attendees : </strong><br/>
+                    {% for attendees in event.attendees.all %}
+                        <li>{{ attendees }}</li><br/>
+                    {% endfor %}        
+              </p>
+              {% if user.is_authenticated %}
+                {% if user == event.manager %}
+                  <a href="{% url 'update-event' event.id %}" class="btn btn-outline-secondary">Update Event</a>
+                  <a href="{% url 'delete-event' event.id %}" class="btn btn-outline-danger">Delete Event</a>
+                {% endif %}
+              {% endif %}
+            </div>
+          </div>
+        {% endif %}
+        {% endfor %}   
+      <br/>
+    <nav aria-label="Page navigation example">
+      <ul class="pagination justify-content-center">
+          {% if page_obj.has_previous %}
+              <li class="page-item "><a class="page-link" href="?page=1">&laquo First</a></li>
+              <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a></li>
+          {% endif %}
+          {% for num in num_page %}
+            <li class="page-item"><a class="page-link" href="?page={{ forloop.counter }}">{{ forloop.counter }}</a></li>
+          {% endfor %}
+          {% if page_obj.has_next %}
+              <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a></li>
+              <li class="page-item"><a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">Last &raquo;</a></li>
+          {% endif %}
+      </ul>
+  </nav>
+  
+{% endblock %}
